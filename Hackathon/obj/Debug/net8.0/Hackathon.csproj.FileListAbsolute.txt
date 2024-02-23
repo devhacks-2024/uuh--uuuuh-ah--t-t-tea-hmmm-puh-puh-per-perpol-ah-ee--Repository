@@ -1,0 +1,15 @@
+C:\Users\carso\source\repos\uuh--uuuuh-ah--t-t-tea-hmmm-puh-puh-per-perpol-ah-ee--Repository\Hackathon\bin\Debug\net8.0\Hackathon.exe
+C:\Users\carso\source\repos\uuh--uuuuh-ah--t-t-tea-hmmm-puh-puh-per-perpol-ah-ee--Repository\Hackathon\bin\Debug\net8.0\Hackathon.deps.json
+C:\Users\carso\source\repos\uuh--uuuuh-ah--t-t-tea-hmmm-puh-puh-per-perpol-ah-ee--Repository\Hackathon\bin\Debug\net8.0\Hackathon.runtimeconfig.json
+C:\Users\carso\source\repos\uuh--uuuuh-ah--t-t-tea-hmmm-puh-puh-per-perpol-ah-ee--Repository\Hackathon\bin\Debug\net8.0\Hackathon.dll
+C:\Users\carso\source\repos\uuh--uuuuh-ah--t-t-tea-hmmm-puh-puh-per-perpol-ah-ee--Repository\Hackathon\bin\Debug\net8.0\Hackathon.pdb
+C:\Users\carso\source\repos\uuh--uuuuh-ah--t-t-tea-hmmm-puh-puh-per-perpol-ah-ee--Repository\Hackathon\obj\Debug\net8.0\Hackathon.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\carso\source\repos\uuh--uuuuh-ah--t-t-tea-hmmm-puh-puh-per-perpol-ah-ee--Repository\Hackathon\obj\Debug\net8.0\Hackathon.AssemblyInfoInputs.cache
+C:\Users\carso\source\repos\uuh--uuuuh-ah--t-t-tea-hmmm-puh-puh-per-perpol-ah-ee--Repository\Hackathon\obj\Debug\net8.0\Hackathon.AssemblyInfo.cs
+C:\Users\carso\source\repos\uuh--uuuuh-ah--t-t-tea-hmmm-puh-puh-per-perpol-ah-ee--Repository\Hackathon\obj\Debug\net8.0\Hackathon.csproj.CoreCompileInputs.cache
+C:\Users\carso\source\repos\uuh--uuuuh-ah--t-t-tea-hmmm-puh-puh-per-perpol-ah-ee--Repository\Hackathon\obj\Debug\net8.0\Hackathon.sourcelink.json
+C:\Users\carso\source\repos\uuh--uuuuh-ah--t-t-tea-hmmm-puh-puh-per-perpol-ah-ee--Repository\Hackathon\obj\Debug\net8.0\Hackathon.dll
+C:\Users\carso\source\repos\uuh--uuuuh-ah--t-t-tea-hmmm-puh-puh-per-perpol-ah-ee--Repository\Hackathon\obj\Debug\net8.0\refint\Hackathon.dll
+C:\Users\carso\source\repos\uuh--uuuuh-ah--t-t-tea-hmmm-puh-puh-per-perpol-ah-ee--Repository\Hackathon\obj\Debug\net8.0\Hackathon.pdb
+C:\Users\carso\source\repos\uuh--uuuuh-ah--t-t-tea-hmmm-puh-puh-per-perpol-ah-ee--Repository\Hackathon\obj\Debug\net8.0\Hackathon.genruntimeconfig.cache
+C:\Users\carso\source\repos\uuh--uuuuh-ah--t-t-tea-hmmm-puh-puh-per-perpol-ah-ee--Repository\Hackathon\obj\Debug\net8.0\ref\Hackathon.dll
