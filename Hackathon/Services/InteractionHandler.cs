@@ -75,17 +75,36 @@ public class InteractionHandler
 
 	private async Task ButtonHandler(SocketMessageComponent component)
 	{
-		// Shop nav
-		if(component.Data.CustomId.Contains("shop_page_"))
+        Console.Out.WriteLine(component.User.GlobalName + ": "+component.Data.CustomId);
+        // Shop nav
+        if (component.Data.CustomId.Contains("shop_page_"))
 		{
 			await HandleShopNavigation(component);
 		}
 		else if(component.Data.CustomId.Contains("item_page_"))
-			{
-				await HandleItemNavigation(component);
-			}
+		{
+			await HandleItemNavigation(component);
+		}
+		else if(component.Data.CustomId.Contains("shop_buy_"))
+		{
+			await HandleBuyItem(component);
+		}
 	}
-	
+
+	private async Task HandleBuyItem(SocketMessageComponent component)
+	{
+		string[] parts = component.Data.CustomId.Split('_');
+		if(parts.Length < 4) return;
+		//if(!int.TryParse(parts[3], out int page)) return;
+		// 2 is item name
+		string itemName = parts[2];
+		// 3 is discord id
+
+		await component.RespondAsync($@"<@{component.User.Id}> attempted to buy item: {itemName}");
+
+		//await component.DeferAsync();// stops crashing?
+	}
+
 	// the custom id is going to be formatted as : `shop_page_<searchterm>_#`
 	private async Task HandleShopNavigation(SocketMessageComponent component)
 	{
@@ -115,7 +134,7 @@ public class InteractionHandler
 		var items = await _database.GetShopItems();
 
 		// modify shop menu with new page
-		await ShopManager.Instance.ShowItemPage(component.Channel, searchTerm, page, items, (IUserMessage)component.Message);
+		await ShopManager.Instance.ShowItemPage(component.Channel, searchTerm, page, items, component.User, (IUserMessage)component.Message);
 
 		await component.DeferAsync();// stops crashing?
 	}

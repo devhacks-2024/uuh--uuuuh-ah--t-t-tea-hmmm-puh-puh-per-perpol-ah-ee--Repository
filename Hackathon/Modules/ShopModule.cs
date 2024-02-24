@@ -43,10 +43,11 @@ public class ShopModule : ModuleBase
 	private async void OpenItemPage(ISocketMessageChannel location, String searchTerm)
 	{
 		var items = await _database.GetShopItems(searchTerm);
-		await ShopManager.Instance.ShowItemPage(location, searchTerm, 0, items);
+		await ShopManager.Instance.ShowItemPage(location, searchTerm, 0, items, Context.User);
 	}
 
 	// Buy item
+	// Buy is on item view page
 
 
 	// etc.
