@@ -65,10 +65,10 @@ public class MongoDBService
 		return players;
 	}
 
-	public async Task<List<PlayerObject>> GetPlayer(long discordId)
+	public async Task<List<PlayerObject>> GetPlayer(string discordId)
 	{
 		var playerCollection = _database.GetCollection<PlayerObject>("Players");
-		var filter = Builders<PlayerObject>.Filter.Eq("player.id", discordId);
+		var filter = Builders<PlayerObject>.Filter.Eq("player.discordId", discordId);
 		
 		List<PlayerObject> players = await playerCollection.Find(filter).ToListAsync();
 

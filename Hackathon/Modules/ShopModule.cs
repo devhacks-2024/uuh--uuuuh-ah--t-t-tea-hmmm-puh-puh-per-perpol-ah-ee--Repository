@@ -48,7 +48,6 @@ public class ShopModule : ModuleBase
 
 	// Buy item
 
-	// Item info
 
 	// etc.
 

@@ -8,5 +8,5 @@ namespace Hackathon.DataObjects.PlayerAdditions;
 public class Player
 {
 	public string name { get; set; }
-	public long discordId { get; set; }
+	public string discordId { get; set; }// ulong -> string because ulong be to long
 }
