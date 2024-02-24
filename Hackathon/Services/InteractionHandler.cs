@@ -32,8 +32,8 @@ public class InteractionHandler
 
 	public InteractionHandler(DiscordSocketClient client, InteractionService interactionService, IServiceProvider services, ILogger<InteractionHandler> logger, OpenAIService openAiService, MongoDBService mongoService)
     {
-        _client = client;
         _interactionService = interactionService;
+        _client = client;
         _services = services;
         _logger = logger;
         _openAiService = openAiService;
@@ -80,19 +80,42 @@ public class InteractionHandler
 		{
 			await HandleShopNavigation(component);
 		}
+		else if(component.Data.CustomId.Contains("item_page_"))
+			{
+				await HandleItemNavigation(component);
+			}
 	}
 	
-	// the custom id is going to be formatted as : `shop_page_#`
+	// the custom id is going to be formatted as : `shop_page_<searchterm>_#`
 	private async Task HandleShopNavigation(SocketMessageComponent component)
 	{
 		string[] parts = component.Data.CustomId.Split('_');
 		if(parts.Length < 3) return;
 		if(!int.TryParse(parts[2], out int page)) return;
 
-		var items = await _database.GetAllShopItems();
+		var items = await _database.GetShopItems();
 
 		// modify shop menu with new page
 		await ShopManager.Instance.ShowShopPage(component.Channel, page, items, (IUserMessage)component.Message);
+
+		await component.DeferAsync();// stops crashing?
+	}
+
+	private async Task HandleItemNavigation(SocketMessageComponent component)
+	{
+		// 2 is search term
+		// 3 is page
+
+		string[] parts = component.Data.CustomId.Split('_');
+		if(parts.Length < 4) return;
+		if(!int.TryParse(parts[3], out int page)) return;
+
+		String searchTerm = parts[2];
+
+		var items = await _database.GetShopItems();
+
+		// modify shop menu with new page
+		await ShopManager.Instance.ShowItemPage(component.Channel, searchTerm, page, items, (IUserMessage)component.Message);
 
 		await component.DeferAsync();// stops crashing?
 	}

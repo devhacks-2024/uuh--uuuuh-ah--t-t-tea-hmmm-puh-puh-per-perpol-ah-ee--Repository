@@ -1,6 +1,7 @@
 ﻿using Hackathon.DataObjects;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
@@ -29,7 +30,7 @@ public class MongoDBService
 		_logger.LogInformation($"Connected to MongoDB {_database.DatabaseNamespace}");
 	}
 
-	public async Task<List<Item>> GetAllShopItems()
+	public async Task<List<Item>> GetShopItems()
 	{
 		try
 		{
@@ -41,6 +42,20 @@ public class MongoDBService
 		{
 			return new List<Item> { new Item() };
 		}
+	}
+
+	public async Task<List<Item>> GetShopItems(string searchTerm)
+	{
+		var itemCollection = _database.GetCollection<Item>("ShopItems");
+
+		var nameFilter = Builders<Item>.Filter.Regex("Name", new BsonRegularExpression(searchTerm, "i"));
+		var tagsFilter = Builders<Item>.Filter.Regex("Tags", new BsonRegularExpression(searchTerm, "i"));
+
+		var combinedFilter = Builders<Item>.Filter.Or(nameFilter, tagsFilter);
+
+		List<Item> items = await itemCollection.Find(combinedFilter).ToListAsync();
+
+		return items;
 	}
 
 	public async Task<List<PlayerObject>> GetAllPlayers()

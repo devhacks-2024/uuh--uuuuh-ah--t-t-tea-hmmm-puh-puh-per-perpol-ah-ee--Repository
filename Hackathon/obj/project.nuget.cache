@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "wzEITcdy5dUhV0uO6y0s2WvXrUu90PRnE8ACIoT0Sdeega0VVl9GYkrCv2F0OI8IkE/M9ZRWg1z1YN1991/5mA==",
+  "dgSpecHash": "/mwCAmndIOQNBFUtFnB4Q6q9xECyslK8W3g8O7nb0wBgicqQHQK71zTF/8Lr7fm6EcHqm71NdPxUWLIRN7oKVw==",
   "success": true,
-  "projectFilePath": "D:\\Programs\\Hackaton\\uuh--uuuuh-ah--t-t-tea-hmmm-puh-puh-per-perpol-ah-ee--Repository\\Hackathon\\Hackathon.csproj",
+  "projectFilePath": "C:\\Users\\carso\\source\\repos\\uuh--uuuuh-ah--t-t-tea-hmmm-puh-puh-per-perpol-ah-ee--Repository\\Hackathon\\Hackathon.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\carso\\.nuget\\packages\\awssdk.core\\3.7.100.14\\awssdk.core.3.7.100.14.nupkg.sha512",
     "C:\\Users\\carso\\.nuget\\packages\\awssdk.securitytoken\\3.7.100.14\\awssdk.securitytoken.3.7.100.14.nupkg.sha512",
