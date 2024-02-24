@@ -34,7 +34,7 @@ public class PlayerModule : ModuleBase
 			//await Context.Channel.SendMessageAsync(player + "");
 		}*/
 
-		//await FollowupAsync("hmmmmmmmmmmmm");// stops the indefinate "* * * xolobot is thinking..."\
+		await FollowupAsync("hmmmmmmmmmmmm");// stops the indefinate "* * * xolobot is thinking..."\
 	}
 
 	[SlashCommand("me", "WHo aRE YOU!")]
@@ -44,7 +44,7 @@ public class PlayerModule : ModuleBase
 		string discordId = Context.User.Id.ToString();
 		var players = await _database.GetPlayer(discordId);
 
-        if (players.Count == 0) await RespondAsync("You do not exist",ephemeral: true);
+        if (players.Count == 0) await RespondAsync("You are not registered",ephemeral: true);
 
 		// rare case where there is multiple results
 		foreach(PlayerObject player in players)
@@ -67,7 +67,7 @@ public class PlayerModule : ModuleBase
 		EmbedBuilder playerDisplay = new EmbedBuilder()
 			.WithAuthor(Context.User)
 			.WithTitle(player.player.characterName)
-			.WithFooter($"Player: {player.player.playerName}");
+			.WithFooter($"Player:  {player.player.playerName}");
 
 		// First line: title & background
         playerDisplay.AddField(player.background.name, player.background.description);
@@ -103,7 +103,10 @@ public class PlayerModule : ModuleBase
                         sStr, sDex, sCon, sInt, sWis, sCha);
         playerDisplay.AddField("Stats:", sStats);
 
-        //playerDisplay.AddField("Class:", );
+        // Next line: Gold
+        playerDisplay.AddField("Gold:", player.treasure.gold, true);
+        playerDisplay.AddField("Silver:", player.treasure.silver, true);
+        playerDisplay.AddField("Copper:", player.treasure.copper, true);
 
         // nav buttons
         // Page switching logic is inside InteractionHandler......yes I know.
