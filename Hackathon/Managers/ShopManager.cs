@@ -82,7 +82,7 @@ public class ShopManager
 
 		// Add items to the window
 		for(int i = pageIndex * ITEMS_PER_SHOP_PAGE; i < Math.Min((pageIndex + 1) * ITEMS_PER_SHOP_PAGE, items.Count); i++) {
-			window.AddField($"{items[i].name}: {items[i].cost}gp", items[i].TagsToString() + "\n" + items[i].shortdescription + "\n---\n\n");
+			window.AddField($"\n**{items[i].name}**: ***{items[i].cost}***gp", $"> *{items[i].TagsToString()}*\n\n{items[i].shortdescription} \n\n──────────\n\n");
 		}
 
 		// nav buttons
