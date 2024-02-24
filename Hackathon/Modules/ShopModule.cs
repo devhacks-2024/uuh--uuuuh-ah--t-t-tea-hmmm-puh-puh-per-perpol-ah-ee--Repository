@@ -23,7 +23,7 @@ public class ShopModule : CommandModule
 	private async void OpenShop(ISocketMessageChannel location)
 	{
 		var items = await _database.GetAllShopItems();
-		await Shop.Instance.ShowShopPage(location, 0, items);
+		await ShopManager.Instance.ShowShopPage(location, 0, items);
 	}
 
 

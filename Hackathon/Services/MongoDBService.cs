@@ -43,4 +43,11 @@ public class MongoDBService
 		}
 	}
 
+	public async Task<List<PlayerObject>> GetAllPlayers()
+	{
+		var playerCollection = _database.GetCollection<PlayerObject>("Players");
+		List<PlayerObject> players = await playerCollection.Find(_ => true).ToListAsync();
+		return players;
+	}
+
 }

@@ -92,7 +92,7 @@ public class InteractionHandler
 		var items = await _database.GetAllShopItems();
 
 		// modify shop menu with new page
-		await Shop.Instance.ShowShopPage(component.Channel, page, items, (IUserMessage)component.Message);
+		await ShopManager.Instance.ShowShopPage(component.Channel, page, items, (IUserMessage)component.Message);
 
 		await component.DeferAsync();// stops crashing?
 	}
