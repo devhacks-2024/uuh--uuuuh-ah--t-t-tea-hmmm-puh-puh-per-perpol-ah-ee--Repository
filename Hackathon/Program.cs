@@ -1,9 +1,6 @@
 ﻿namespace Hackathon;
 
-internal class Program
-{
-	static void Main(string[] args)
-	{
-		Console.WriteLine("Hello, World!");
-	}
+public static class Program{
+	private static void Main()
+		=> new Startup().Initialize().GetAwaiter().GetResult();
 }
