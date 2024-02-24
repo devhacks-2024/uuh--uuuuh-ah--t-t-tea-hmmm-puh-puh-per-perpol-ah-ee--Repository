@@ -23,11 +23,11 @@ public class ShopManager
 			return _instance;
 		}
 	}
-	private const int ITEMS_PER_SHOP_PAGE = 5;
+	private const int ITEMS_PER_SHOP_PAGE = 3;
 	private const string SHOP_NAME = "**Magic store**";
-	private const int ITEMS_PER_INFO_PAGE = 1;
 
 	// Similear to show shop, however just for search term items and shows more data `shop_page_<searchterm>_#`
+	// ONLY SHOWS 1 Item per page
 	public async Task ShowItemPage(ISocketMessageChannel location, String searchTerm, int pageIndex, List<Item> items, IUserMessage existingMessage = null)
 	{
 		if(searchTerm.Contains("_"))
@@ -36,17 +36,20 @@ public class ShopManager
 			return;
 		}
 
-		int totalPages = (int)Math.Ceiling(items.Count / (double)ITEMS_PER_INFO_PAGE);
+		int totalPages = items.Count;
 
 		EmbedBuilder window = new EmbedBuilder()
-			.WithTitle($"Showing {items.Count} results for: '{searchTerm}'")
-			.WithFooter(footer => footer.Text = $"Page {pageIndex + 1} of {totalPages}");
+			.WithTitle($"**{items[pageIndex].name}**\n**{items[pageIndex].cost}** ***gp***")
+			.WithDescription($"> *{items[pageIndex].TagsToString()}*")
+			.WithFooter(footer => footer.Text = $"{items.Count} results for: '{searchTerm}'\nPage {pageIndex + 1} of {totalPages}")
+			.WithImageUrl(items[pageIndex].imgUrl ?? "");// This makes it only possible for 1 item at a time
 
+		window.AddField($"**Description**:", $"{items[pageIndex].longdescription}");
 		// Add items to the window
-		for(int i = pageIndex * ITEMS_PER_INFO_PAGE; i < Math.Min((pageIndex + 1) * ITEMS_PER_INFO_PAGE, items.Count); i++)
+		/*for(int i = pageIndex * ITEMS_PER_INFO_PAGE; i < Math.Min((pageIndex + 1) * ITEMS_PER_INFO_PAGE, items.Count); i++)
 		{
-			window.AddField($"\n**{items[i].name}**: ***{items[i].cost}***gp", $"> *{items[i].TagsToString()}*\n\n{items[i].longdescription} \n\n──────────\n\n");
-		}
+			window.AddField($"\n**{items[i].name}**: ***{items[i].cost}***gp", $"> *{items[i].TagsToString()}*\n\n{items[i].longdescription}");
+		}*/
 
 		// nav buttons
 		// Page switching logic is inside InteractionHandler......yes I know.

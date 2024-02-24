@@ -24,7 +24,7 @@ public class ShopModule : ModuleBase
 		await FollowupAsync("hmmmmmmmmmmmm");// stops the indefinate "* * * xolobot is thinking..."
 	}
 
-	[SlashCommand("info", "Shows info for item")]
+	[SlashCommand("view", "View specifc items")]
 	public async Task ItemInfoCommand(
 		[Summary("query", "items with names and tags containing")]
 		string searchTerm)
