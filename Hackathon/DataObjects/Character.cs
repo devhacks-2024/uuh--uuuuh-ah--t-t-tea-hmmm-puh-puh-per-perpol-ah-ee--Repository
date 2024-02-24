@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Hackathon.JsonObjects;
+namespace Hackathon.DataObjects;
 public  class Character
 {
 	public struct Player {
