@@ -9,15 +9,15 @@ using System.Threading.Tasks;
 
 // Singleton
 namespace Hackathon.Managers.Shop;
-public class Shop
+public class ShopManager
 {
-	private static Shop _instance;
-	private Shop() { }
-	public static Shop Instance
+	private static ShopManager _instance;
+	private ShopManager() { }
+	public static ShopManager Instance
 	{
 		get{
 			if(_instance == null){
-				_instance = new Shop();
+				_instance = new ShopManager();
 			}
 
 			return _instance;
