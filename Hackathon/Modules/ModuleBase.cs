@@ -4,15 +4,15 @@ using Hackathon.Services;
 using Microsoft.Extensions.Logging;
 
 namespace Hackathon.Modules;
-public class CommandModule : InteractionModuleBase<SocketInteractionContext>
+public abstract class ModuleBase : InteractionModuleBase<SocketInteractionContext>
 {
-	protected readonly ILogger<CommandModule> _logger;
+	protected readonly ILogger<ModuleBase> _logger;
 	protected readonly MongoDBService _database;
 	protected readonly OpenAIService _openAI;
 	protected readonly DiscordSocketClient _client;
 	protected readonly InteractionHandler _interaction;
 
-	public CommandModule(ILogger<CommandModule> logger, MongoDBService mongoDbService, OpenAIService openAIService, DiscordSocketClient client, InteractionHandler interaction)
+	public ModuleBase(ILogger<ModuleBase> logger, MongoDBService mongoDbService, OpenAIService openAIService, DiscordSocketClient client, InteractionHandler interaction)
 	{
 		_logger = logger;
 		_database = mongoDbService;
@@ -20,9 +20,9 @@ public class CommandModule : InteractionModuleBase<SocketInteractionContext>
 		_client = client;
 	}
 
-	[SlashCommand("test", "Just a test command")]
+	/*[SlashCommand("test", "Just a test command")]
 	public async Task TestCommand()
 	{
 		await RespondAsync("Hello There");
-	}
+	}*/
 }

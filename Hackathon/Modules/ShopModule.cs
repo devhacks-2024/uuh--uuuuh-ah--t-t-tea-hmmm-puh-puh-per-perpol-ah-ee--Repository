@@ -7,9 +7,9 @@ using Hackathon.Managers.Shop;
 namespace Hackathon.Modules;
 
 [Group("xolo", "commands for interacting with xolobot")]
-public class ShopModule : CommandModule
+public class ShopModule : ModuleBase
 {
-	public ShopModule(ILogger<CommandModule> logger, MongoDBService mongoDbService, OpenAIService openAIService, DiscordSocketClient client, InteractionHandler interaction) : base(logger, mongoDbService, openAIService, client, interaction){}
+	public ShopModule(ILogger<ModuleBase> logger, MongoDBService mongoDbService, OpenAIService openAIService, DiscordSocketClient client, InteractionHandler interaction) : base(logger, mongoDbService, openAIService, client, interaction){}
 
 
 	[SlashCommand("shop", "Opens Shop")]

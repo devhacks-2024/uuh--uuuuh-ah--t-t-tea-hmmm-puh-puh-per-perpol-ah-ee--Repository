@@ -12,27 +12,14 @@ using System.Threading.Tasks;
 using static Hackathon.Services.InteractionHandler;
 
 
-public class TalkingModule
+public class TalkingModule : ModuleBase
 {
-	protected readonly ILogger<TalkingModule> _logger;
-	protected readonly MongoDBService _database;
-	protected readonly OpenAIService _openAI;
-	protected readonly DiscordSocketClient _client;
-	protected readonly InteractionHandler _interaction;
-
-	public TalkingModule(ILogger<TalkingModule> logger, MongoDBService mongoDbService, OpenAIService openAIService, DiscordSocketClient client, InteractionHandler interaction)
+	public TalkingModule(ILogger<ModuleBase> logger, MongoDBService mongoDbService, OpenAIService openAIService, DiscordSocketClient client, InteractionHandler interaction) : base(logger, mongoDbService, openAIService, client, interaction)
 	{
-		_logger = logger;
-		_database = mongoDbService;
-		_openAI = openAIService;
-		_client = client;
-		_interaction = interaction;
-
-		_interaction.OnPostBotMention += ScanForAIResponse;
-		// maybe other events?
+		_interaction.OnPostBotMention += ScanAIResponse;
 	}
 
-	private async void ScanForAIResponse(Object sender, BotResponseArgs args)
+	private async void ScanAIResponse(Object sender, BotResponseArgs args)
 	{
 		string response = args.Response!.ToLower();
 		// scan output from ai
