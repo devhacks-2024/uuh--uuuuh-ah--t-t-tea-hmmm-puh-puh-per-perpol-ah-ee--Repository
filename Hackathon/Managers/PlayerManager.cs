@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Discord.Interactions;
+using Hackathon.DataObjects.PlayerAdditions;
 
 // Singleton
 namespace Hackathon.Managers.Shop;
@@ -30,4 +32,17 @@ public class PlayerManager
 			.WithTitle(player.player.characterName);
             
     }
+
+	public EmbedBuilder ShowPlayerInventroy(PlayerObject player, bool showAsList)
+	{
+		EmbedBuilder window = new EmbedBuilder()
+			.WithTitle($"{player.player.characterName}'s Inventory");
+
+		foreach(Item item in player.inventory)
+		{
+			window.AddField($"{item.name}",$"{item.shortdescription}",true);
+		}
+
+		return window;
+	}
 }
