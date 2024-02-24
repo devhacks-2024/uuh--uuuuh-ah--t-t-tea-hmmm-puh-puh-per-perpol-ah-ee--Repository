@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace Hackathon.DataObjects.PlayerAdditions;
 public class Player
 {
-	public string name { get; set; }
+	public string playerName { get; set; }
+	public string characterName { get; set; }
 	public string discordId { get; set; }// ulong -> string because ulong be to long
 }

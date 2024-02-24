@@ -1,10 +1,13 @@
-﻿using Discord.Interactions;
+﻿using Discord;
+using Discord.Interactions;
 using Discord.WebSocket;
 using Hackathon.DataObjects;
 using Hackathon.Services;
 using Microsoft.Extensions.Logging;
+using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -43,8 +46,39 @@ public class PlayerModule : ModuleBase
 		// rare case where there is multiple results
 		foreach(PlayerObject player in players)
 		{
-			await RespondAsync(player.player.name, ephemeral: true);
+			//await RespondAsync(player.player.characterName, ephemeral: true);
+			ShowPlayerEmbed(Context.Channel, player);
 		}
+	}
+
+	private void ShowPlayerEmbed(ISocketMessageChannel location, PlayerObject player)
+	{
+		ulong discordId = ulong.Parse(player.player.discordId);
+		var user = Context.Guild.GetUser(discordId);
+
+		//EmbedAuthorBuilder discordProfile = new EmbedAuthorBuilder()
+			//.WithName(user.Nickname);
+		//.WithIconUrl(user.AvatarId ?? user.GetDefaultAvatarUrl());
+
+
+		EmbedBuilder playerDisplay = new EmbedBuilder()
+			.WithAuthor(Context.User)
+			.WithTitle(player.player.characterName)
+			.WithFooter(player.player.playerName);
+
+		playerDisplay.AddField("Stats:", "s");
+
+		// nav buttons
+		// Page switching logic is inside InteractionHandler......yes I know.
+		// custom id is used to determine the logic for what is interacted with. We are using shop_page_#, for a button and once pressed will show that shop page
+		/*MessageComponent component = new ComponentBuilder()
+			.WithButton("Inventory", customId: $"shop_page_", disabled: player.inventory.Count == 0)
+			.WithButton("Other I forgot", customId: $"shop_page_", disabled: pageIndex == totalPages - 1)
+			.Build();*/
+
+
+		RespondAsync(embed:playerDisplay.Build(), ephemeral: true);
+
 	}
 
 
