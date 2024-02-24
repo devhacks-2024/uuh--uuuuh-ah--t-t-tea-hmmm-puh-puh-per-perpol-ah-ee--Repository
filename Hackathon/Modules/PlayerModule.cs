@@ -2,6 +2,8 @@
 using Discord.Interactions;
 using Discord.WebSocket;
 using Hackathon.DataObjects;
+using Hackathon.DataObjects.PlayerAdditions;
+using Hackathon.Managers.Shop;
 using Hackathon.Services;
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
@@ -93,6 +95,19 @@ public class PlayerModule : ModuleBase
         RespondAsync(embed:playerDisplay.Build(), ephemeral: true);
 
 	}
+
+	[SlashCommand("inventory", "Shows your inventory")]
+	public async Task ShowInventoryCommand(bool showAsList = true)
+	{
+		ulong discordId = Context.User.Id;
+
+		var user =  await _database.GetPlayer(discordId.ToString());
+
+		var window = PlayerManager.Instance.ShowPlayerInventroy(user.First(), showAsList);
+		await RespondAsync(embed: window.Build());
+	}
+
+
 
 
 	// player inv
