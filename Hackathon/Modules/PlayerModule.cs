@@ -12,9 +12,9 @@ using System.Threading.Tasks;
 namespace Hackathon.Modules;
 
 [Group("player", "Commands assosiated with YOU!")]
-public class PlayerModule : CommandModule
+public class PlayerModule : ModuleBase
 {
-	public PlayerModule(ILogger<CommandModule> logger, MongoDBService mongoDbService, OpenAIService openAIService, DiscordSocketClient client, InteractionHandler interaction) : base(logger, mongoDbService, openAIService, client, interaction)
+	public PlayerModule(ILogger<ModuleBase> logger, MongoDBService mongoDbService, OpenAIService openAIService, DiscordSocketClient client, InteractionHandler interaction) : base(logger, mongoDbService, openAIService, client, interaction)
 	{
 	}
 
