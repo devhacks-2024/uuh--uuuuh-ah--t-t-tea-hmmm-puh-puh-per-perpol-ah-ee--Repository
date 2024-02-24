@@ -1,4 +1,5 @@
 ﻿using Hackathon.DataObjects;
+using Hackathon.DataObjects.PlayerAdditions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
@@ -77,4 +78,39 @@ public class MongoDBService
 		return players;
 	}
 
+
+	public async Task<int> BuyItem(string discordId, string itemName)
+	{
+		var itemCollection = _database.GetCollection<Item>("ShopItems");
+		var item = await itemCollection.Find(i => i.name == itemName).FirstOrDefaultAsync();
+		
+		var playerCollection = _database.GetCollection<PlayerObject>("Players");
+		var filter = Builders<PlayerObject>.Filter.Eq("player.discordId", discordId);
+		var player = await playerCollection.Find(filter).FirstOrDefaultAsync(); // This breaks if there are multiple characters assosiated with a player.
+
+		if(item == null || player == null)
+		{
+			// item not found
+			return -1;
+		}
+
+		if(player.treasure.gold < item.cost)
+		{
+			//poor
+			return 0;
+		}
+
+		// Update gold and inv
+		var updatePlayer = Builders<PlayerObject>.Update
+			.Push("inventory", item)
+			.Set(p => p.treasure.gold, player.treasure.gold - item.cost);
+
+		await playerCollection.UpdateOneAsync(filter, updatePlayer);
+
+		// Update shop
+		var deleteFilter = Builders<Item>.Filter.Eq("name", itemName);
+		await itemCollection.DeleteOneAsync(deleteFilter);
+
+		return 1;
+	}
 }

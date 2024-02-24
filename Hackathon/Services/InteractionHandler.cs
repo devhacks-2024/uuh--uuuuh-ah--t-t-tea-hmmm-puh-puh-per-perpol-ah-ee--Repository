@@ -100,7 +100,9 @@ public class InteractionHandler
 		string itemName = parts[2];
 		// 3 is discord id
 
-		await component.RespondAsync($@"<@{component.User.Id}> attempted to buy item: {itemName}");
+		//await component.RespondAsync($@"<@{component.User.Id}> attempted to buy item: {itemName}");
+
+		ShopManager.Instance.BuyItem(component, itemName, _database);
 
 		//await component.DeferAsync();// stops crashing?
 	}
@@ -124,7 +126,6 @@ public class InteractionHandler
 	{
 		// 2 is search term
 		// 3 is page
-
 		string[] parts = component.Data.CustomId.Split('_');
 		if(parts.Length < 4) return;
 		if(!int.TryParse(parts[3], out int page)) return;
