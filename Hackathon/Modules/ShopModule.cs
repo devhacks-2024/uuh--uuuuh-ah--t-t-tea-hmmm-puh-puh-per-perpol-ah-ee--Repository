@@ -10,13 +10,13 @@ using System.Text;
 
 namespace Hackathon.Modules;
 
-[Group("xolo", "commands for interacting with xolobot")]
+[Group("shop", "commands for interacting with xolobot")]
 public class ShopModule : ModuleBase
 {
 	public ShopModule(ILogger<ModuleBase> logger, MongoDBService mongoDbService, OpenAIService openAIService, DiscordSocketClient client, InteractionHandler interaction) : base(logger, mongoDbService, openAIService, client, interaction){}
 
 
-	[SlashCommand("shop", "Opens Shop")]
+	[SlashCommand("open", "Opens Shop")]
 	public async Task ShopCommand()
 	{
 		await DeferAsync();// stops error messages when there isnt an error
