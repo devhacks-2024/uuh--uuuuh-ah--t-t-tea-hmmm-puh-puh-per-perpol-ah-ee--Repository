@@ -5,7 +5,12 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <ApplicationIcon>Xolobob.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="Xolobob.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Services\" />
