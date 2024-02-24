@@ -1,6 +1,7 @@
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
+using Hackathon.Managers.Shop;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
 
@@ -24,20 +25,25 @@ public class InteractionHandler
     private readonly IServiceProvider _services;
     private readonly ILogger _logger;
 	private readonly OpenAIService _openAiService;
+	private readonly MongoDBService _database;
 
 	public delegate void BotResponseEvent(object sender, BotResponseArgs e);
 	public event BotResponseEvent? OnPostBotMention;
 
-	public InteractionHandler(DiscordSocketClient client, InteractionService interactionService, IServiceProvider services, ILogger<InteractionHandler> logger, OpenAIService openAiService)
+	public InteractionHandler(DiscordSocketClient client, InteractionService interactionService, IServiceProvider services, ILogger<InteractionHandler> logger, OpenAIService openAiService, MongoDBService mongoService)
     {
         _client = client;
         _interactionService = interactionService;
         _services = services;
         _logger = logger;
         _openAiService = openAiService;
+		_database = mongoService;
+
+		// events
+		_client.ButtonExecuted += ButtonHandler;
     }
 
-    public async Task InitializeAsync()
+	public async Task InitializeAsync()
     {
         await _interactionService.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
 
@@ -66,6 +72,31 @@ public class InteractionHandler
 
 		//await Console.Out.WriteLineAsync("general message Test");// anything sent, anywhere 
 	}
+
+	private async Task ButtonHandler(SocketMessageComponent component)
+	{
+		// Shop nav
+		if(component.Data.CustomId.Contains("shop_page_"))
+		{
+			await HandleShopNavigation(component);
+		}
+	}
+	
+	// the custom id is going to be formatted as : `shop_page_#`
+	private async Task HandleShopNavigation(SocketMessageComponent component)
+	{
+		string[] parts = component.Data.CustomId.Split('_');
+		if(parts.Length < 3) return;
+		if(!int.TryParse(parts[2], out int page)) return;
+
+		var items = await _database.GetAllShopItems();
+
+		await Shop.Instance.ShowShopPage(component.Channel, page, items);
+
+		await component.DeferAsync();// stops crashing?
+	}
+
+
 
 	// ai response
 	private async Task<String> HandleMention(SocketMessage message)

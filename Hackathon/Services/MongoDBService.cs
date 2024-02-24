@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Hackathon.DataObjects;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System;
@@ -26,6 +27,20 @@ public class MongoDBService
 
 		_logger = logger;
 		_logger.LogInformation($"Connected to MongoDB {_database.DatabaseNamespace}");
+	}
+
+	public async Task<List<Item>> GetAllShopItems()
+	{
+		try
+		{
+			var shopItemsCollection = _database.GetCollection<Item>("ShopItems");
+			var items = await shopItemsCollection.Find(_ => true).ToListAsync();
+			return items;
+		}
+		catch(Exception ex)
+		{
+			return new List<Item> { new Item() };
+		}
 	}
 
 }
