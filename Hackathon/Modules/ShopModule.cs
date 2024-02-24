@@ -2,6 +2,7 @@
 using Discord.WebSocket;
 using Hackathon.Services;
 using Microsoft.Extensions.Logging;
+using Hackathon.Managers.Shop;
 
 namespace Hackathon.Modules;
 
@@ -14,8 +15,16 @@ public class ShopModule : CommandModule
 	[SlashCommand("shop", "Opens Shop")]
 	public async Task ShopCommand()
 	{
-		await RespondAsync("test 2");
+		OpenShop(Context.Channel);
 	}
+
+	private async void OpenShop(ISocketMessageChannel location)
+	{
+		var items = await _database.GetAllShopItems();
+		await Shop.Instance.ShowShopPage(location, 0, items);
+	}
+
+
 
 
 }
