@@ -26,6 +26,12 @@ public class ShopModule : CommandModule
 		await ShopManager.Instance.ShowShopPage(location, 0, items);
 	}
 
+	// Buy item
+
+	// Item info
+
+	// etc.
+
 
 
 

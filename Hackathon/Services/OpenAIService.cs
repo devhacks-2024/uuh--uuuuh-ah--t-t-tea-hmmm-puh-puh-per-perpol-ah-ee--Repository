@@ -33,7 +33,7 @@ public class OpenAIService
 
 	private readonly OpenAIClient _client;
 	private readonly string _systemPrompt;
-	private const string MODEL = "gpt-4";//"gpt-3.5-turbo";
+	private const string MODEL = "gpt-3.5-turbo";//"gpt-3.5-turbo";
 
 	private readonly ILogger _logger;
 
