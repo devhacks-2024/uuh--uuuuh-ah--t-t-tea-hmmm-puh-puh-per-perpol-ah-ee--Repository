@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Hackathon.Services;
 
 // Singleton
 namespace Hackathon.Managers.Shop;
@@ -19,10 +20,10 @@ public class ShopManager
 			if(_instance == null){
 				_instance = new ShopManager();
 			}
-
 			return _instance;
 		}
 	}
+
 	private const int ITEMS_PER_SHOP_PAGE = 3;
 	private const string SHOP_NAME = "**Magic store**";
 
@@ -111,4 +112,21 @@ public class ShopManager
 		}
 	}
 
+	public async void BuyItem(SocketMessageComponent caller, string itemName, MongoDBService databaseReference)
+	{
+		int result = await databaseReference.BuyItem(caller.User.Id.ToString(), itemName);
+
+		if(result == -1)
+		{
+			await caller.RespondAsync("item or player is null in database", ephemeral: true);
+		}
+		else if(result == 0)// This should never get called
+		{
+			await caller.RespondAsync("You are too poor ;(", ephemeral: true);
+		}
+		else if(result == 1)
+		{
+			await caller.RespondAsync($"<@{caller.User.Id}>, is now the owner of: {itemName}");
+		}
+	}
 }

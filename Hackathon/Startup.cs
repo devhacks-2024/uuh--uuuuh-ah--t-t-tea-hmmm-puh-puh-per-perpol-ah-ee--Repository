@@ -10,6 +10,7 @@ using Serilog.Sinks.SystemConsole;
 using MongoDB.Driver;
 using Hackathon.Services;
 using Microsoft.Extensions.Logging;
+using Hackathon.Managers.Shop;
 
 public class Startup
 {
@@ -58,6 +59,7 @@ public class Startup
 				var logger = provider.GetRequiredService<ILogger<OpenAIService>>();
 				return new OpenAIService(apiKey, systemPrompt, logger);
 			});
+
 
 			// MONGO
 			services.Configure<MongoDBSettings>(host.Configuration.GetSection(nameof(MongoDBSettings)));
