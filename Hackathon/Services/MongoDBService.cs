@@ -50,4 +50,16 @@ public class MongoDBService
 		return players;
 	}
 
+	public async Task<List<PlayerObject>> GetPlayer(long discordId)
+	{
+		var playerCollection = _database.GetCollection<PlayerObject>("Players");
+		var filter = Builders<PlayerObject>.Filter.Eq("player.id", discordId);
+		
+		List<PlayerObject> players = await playerCollection.Find(filter).ToListAsync();
+
+		if(players.Count > 1) Console.WriteLine("huh, it seems discord id:'" + discordId + "' has " + players.Count + "players assosiated with them.");
+
+		return players;
+	}
+
 }
