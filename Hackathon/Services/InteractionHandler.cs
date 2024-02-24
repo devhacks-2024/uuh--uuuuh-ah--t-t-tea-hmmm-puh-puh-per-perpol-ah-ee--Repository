@@ -91,7 +91,8 @@ public class InteractionHandler
 
 		var items = await _database.GetAllShopItems();
 
-		await Shop.Instance.ShowShopPage(component.Channel, page, items);
+		// modify shop menu with new page
+		await Shop.Instance.ShowShopPage(component.Channel, page, items, (IUserMessage)component.Message);
 
 		await component.DeferAsync();// stops crashing?
 	}

@@ -15,7 +15,9 @@ public class ShopModule : CommandModule
 	[SlashCommand("shop", "Opens Shop")]
 	public async Task ShopCommand()
 	{
+		await DeferAsync();// stops error messages when there isnt an error
 		OpenShop(Context.Channel);
+		await FollowupAsync("hmmmmmmmmmmmm");// stops the indefinate "* * * xolobot is thinking..."
 	}
 
 	private async void OpenShop(ISocketMessageChannel location)

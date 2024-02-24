@@ -28,7 +28,8 @@ public class Shop
 	private const string SHOP_NAME = "**Magic store**";
 
 	// a menu which has pages and shows item names
-	public async Task ShowShopPage(ISocketMessageChannel location, int pageIndex, List<Item> items){
+	public async Task ShowShopPage(ISocketMessageChannel location, int pageIndex, List<Item> items, IUserMessage existingMessage = null)
+	{
 		int totalPages = (int)Math.Ceiling(items.Count / (double)ITEMS_PER_PAGE);
 
 		EmbedBuilder window = new EmbedBuilder()
@@ -42,12 +43,26 @@ public class Shop
 
 		// nav buttons
 		// Page switching logic is inside InteractionHandler......yes I know.
+		// custom id is used to determine the logic for what is interacted with. We are using shop_page_#, for a button and once pressed will show that shop page
 		MessageComponent component = new ComponentBuilder()
 			.WithButton(emote: new Emoji("\u2B05"), customId: $"shop_page_{pageIndex-1}", disabled: pageIndex == 0)
 			.WithButton(emote: new Emoji("\u27A1"), customId: $"shop_page_{pageIndex+1}", disabled: pageIndex == totalPages - 1)
 			.Build();
 
-		await location.SendMessageAsync(embed: window.Build(), components: component);
+
+		// Edit existing shop menu, so it doesnt spam.
+		if(existingMessage != null)
+		{
+			await existingMessage.ModifyAsync(msg => {
+				msg.Embed = window.Build();
+				msg.Components = component;
+			});
+		}
+		else
+		{
+			await location.SendMessageAsync(embed: window.Build(), components: component);
+		}
+
 	}
 
 }
