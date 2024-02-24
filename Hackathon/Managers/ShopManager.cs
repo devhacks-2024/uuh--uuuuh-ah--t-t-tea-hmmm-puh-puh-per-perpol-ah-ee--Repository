@@ -45,7 +45,7 @@ public class ShopManager
 		// Add items to the window
 		for(int i = pageIndex * ITEMS_PER_INFO_PAGE; i < Math.Min((pageIndex + 1) * ITEMS_PER_INFO_PAGE, items.Count); i++)
 		{
-			window.AddField($"{items[i].Name}: {items[i].GPCost}gp", items[i].Description + "\n---\n\n");
+			window.AddField($"{items[i].name}: {items[i].cost}gp", items[i].longdescription + "\n---\n\n");
 		}
 
 		// nav buttons
@@ -81,8 +81,8 @@ public class ShopManager
 			.WithFooter(footer => footer.Text = $"Page {pageIndex + 1} of {totalPages}");
 
 		// Add items to the window
-		for(int i = pageIndex * ITEMS_PER_SHOP_PAGE; i < Math.Min((pageIndex + 1) * ITEMS_PER_SHOP_PAGE, items.Count); i++){
-			window.AddField(items[i].Name, /*items[i].Description +*/ "\n---\n\n");
+		for(int i = pageIndex * ITEMS_PER_SHOP_PAGE; i < Math.Min((pageIndex + 1) * ITEMS_PER_SHOP_PAGE, items.Count); i++) {
+			window.AddField($"{items[i].name}: {items[i].cost}gp", items[i].TagsToString() + "\n" + items[i].shortdescription + "\n---\n\n");
 		}
 
 		// nav buttons

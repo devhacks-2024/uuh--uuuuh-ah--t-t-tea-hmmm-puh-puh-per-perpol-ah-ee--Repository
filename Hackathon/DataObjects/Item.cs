@@ -12,12 +12,29 @@ namespace Hackathon.DataObjects;
 public class Item
 {
 	public ObjectId _id { get; set; }
-	public double GPCost { get; set; }
-	public string Name { get; set; }
-	public string Description { get; set; }
-	public string Lore { get; set; }
-	public string Weight { get; set; }//optional
-	public string[] Tags { get; set; }// optional
+	public int cost { get; set; }
+	public string name { get; set; }
+	public string longdescription { get; set; }
+
+	public string shortdescription { get; set; }
+	public string lore { get; set; }
+	public string weight { get; set; }//optional
+	public string[] tags { get; set; }// optional
 
 	public string imgUrl { get; set; }//optional
+
+	public string TagsToString()
+	{
+		if(tags == null) return "";
+
+		StringBuilder sb = new StringBuilder();
+		foreach(string tag in tags)
+		{
+			sb.Append(tag).Append(", ");
+		}
+
+		sb.Remove(sb.Length - 2, 2);
+
+		return sb.ToString();
+	}
 }

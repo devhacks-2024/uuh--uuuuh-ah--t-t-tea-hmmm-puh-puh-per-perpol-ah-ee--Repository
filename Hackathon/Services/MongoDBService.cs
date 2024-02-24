@@ -48,8 +48,8 @@ public class MongoDBService
 	{
 		var itemCollection = _database.GetCollection<Item>("ShopItems");
 
-		var nameFilter = Builders<Item>.Filter.Regex("Name", new BsonRegularExpression(searchTerm, "i"));
-		var tagsFilter = Builders<Item>.Filter.Regex("Tags", new BsonRegularExpression(searchTerm, "i"));
+		var nameFilter = Builders<Item>.Filter.Regex("name", new BsonRegularExpression(searchTerm, "i"));
+		var tagsFilter = Builders<Item>.Filter.Regex("tags", new BsonRegularExpression(searchTerm, "i"));
 
 		var combinedFilter = Builders<Item>.Filter.Or(nameFilter, tagsFilter);
 
