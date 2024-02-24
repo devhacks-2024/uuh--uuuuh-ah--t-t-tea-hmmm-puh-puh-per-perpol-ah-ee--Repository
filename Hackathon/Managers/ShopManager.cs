@@ -39,13 +39,13 @@ public class ShopManager
 		int totalPages = (int)Math.Ceiling(items.Count / (double)ITEMS_PER_INFO_PAGE);
 
 		EmbedBuilder window = new EmbedBuilder()
-			.WithTitle($"Showing {items.Count} results for: {searchTerm}")
+			.WithTitle($"Showing {items.Count} results for: '{searchTerm}'")
 			.WithFooter(footer => footer.Text = $"Page {pageIndex + 1} of {totalPages}");
 
 		// Add items to the window
 		for(int i = pageIndex * ITEMS_PER_INFO_PAGE; i < Math.Min((pageIndex + 1) * ITEMS_PER_INFO_PAGE, items.Count); i++)
 		{
-			window.AddField($"{items[i].name}: {items[i].cost}gp", items[i].longdescription + "\n---\n\n");
+			window.AddField($"\n**{items[i].name}**: ***{items[i].cost}***gp", $"> *{items[i].TagsToString()}*\n\n{items[i].longdescription} \n\n──────────\n\n");
 		}
 
 		// nav buttons
