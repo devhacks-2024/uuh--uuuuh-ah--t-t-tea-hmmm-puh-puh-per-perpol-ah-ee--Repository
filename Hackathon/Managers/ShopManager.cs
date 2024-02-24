@@ -28,7 +28,7 @@ public class ShopManager
 
 	// Similear to show shop, however just for search term items and shows more data `shop_page_<searchterm>_#`
 	// ONLY SHOWS 1 Item per page
-	public async Task ShowItemPage(ISocketMessageChannel location, String searchTerm, int pageIndex, List<Item> items, IUserMessage existingMessage = null)
+	public async Task ShowItemPage(ISocketMessageChannel location, String searchTerm, int pageIndex, List<Item> items, IUser userInteractor, IUserMessage existingMessage = null)
 	{
 		if(searchTerm.Contains("_"))
 		{
@@ -37,27 +37,27 @@ public class ShopManager
 		}
 
 		int totalPages = items.Count;
+		Item item = items[pageIndex];
 
 		EmbedBuilder window = new EmbedBuilder()
-			.WithTitle($"**{items[pageIndex].name}**\n**{items[pageIndex].cost}** ***gp***")
-			.WithDescription($"> *{items[pageIndex].TagsToString()}*")
+			.WithTitle($"**{item.name}**\n**{item.cost}** ***gp***")
+			.WithDescription($"> *{item.TagsToString()}*")
 			.WithFooter(footer => footer.Text = $"{items.Count} results for: '{searchTerm}'\nPage {pageIndex + 1} of {totalPages}")
-			.WithImageUrl(items[pageIndex].imgUrl ?? "");// This makes it only possible for 1 item at a time
+			.WithImageUrl(item.imgUrl ?? "");// This makes it only possible for 1 item at a time
 
-		window.AddField($"**Description**:", $"{items[pageIndex].longdescription}");
-		// Add items to the window
-		/*for(int i = pageIndex * ITEMS_PER_INFO_PAGE; i < Math.Min((pageIndex + 1) * ITEMS_PER_INFO_PAGE, items.Count); i++)
-		{
-			window.AddField($"\n**{items[i].name}**: ***{items[i].cost}***gp", $"> *{items[i].TagsToString()}*\n\n{items[i].longdescription}");
-		}*/
+		window.AddField($"**Description**:", $"{item.longdescription}");
 
 		// nav buttons
 		// Page switching logic is inside InteractionHandler......yes I know.
-		// custom id is used to determine the logic for what is interacted with. We are using `shop_page_<searchterm>_#`, for a button and once pressed will show that item page
-		MessageComponent component = new ComponentBuilder()
-			.WithButton(emote: new Emoji("\u2B05"), customId: $"item_page_{searchTerm}_{pageIndex - 1}", disabled: pageIndex == 0)
-			.WithButton(emote: new Emoji("\u27A1"), customId: $"item_page_{searchTerm}_{pageIndex + 1}", disabled: pageIndex == totalPages - 1)
-			.Build();
+		var component = new ComponentBuilder()
+			.WithButton("***BUY NOW!***", customId: $"shop_buy_{item.name}_{userInteractor.Id.ToString()}");
+
+		if(items.Count > 1)
+		{
+			component
+				.WithButton(emote: new Emoji("\u2B05"), customId: $"item_page_{searchTerm}_{pageIndex - 1}", disabled: pageIndex == 0)
+			.WithButton(emote: new Emoji("\u27A1"), customId: $"item_page_{searchTerm}_{pageIndex + 1}", disabled: pageIndex == totalPages - 1);
+		}
 
 
 		// Edit existing shop menu, so it doesnt spam.
@@ -65,12 +65,12 @@ public class ShopManager
 		{
 			await existingMessage.ModifyAsync(msg => {
 				msg.Embed = window.Build();
-				msg.Components = component;
+				msg.Components = component.Build();
 			});
 		}
 		else
 		{
-			await location.SendMessageAsync(embed: window.Build(), components: component);
+			await location.SendMessageAsync(embed: window.Build(), components: component.Build());
 		}
 	}
 
