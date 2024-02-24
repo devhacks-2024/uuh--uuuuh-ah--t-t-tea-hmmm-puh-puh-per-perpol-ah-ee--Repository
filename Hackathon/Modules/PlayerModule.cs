@@ -19,7 +19,6 @@ public class PlayerModule : ModuleBase
 {
 	public PlayerModule(ILogger<ModuleBase> logger, MongoDBService mongoDbService, OpenAIService openAIService, DiscordSocketClient client, InteractionHandler interaction) : base(logger, mongoDbService, openAIService, client, interaction){}
 
-
 	[SlashCommand("all", "Shows All Players")]
 	public async Task DisplayAllCommand()
 	{
@@ -41,7 +40,7 @@ public class PlayerModule : ModuleBase
 		string discordId = Context.User.Id.ToString();
 		var players = await _database.GetPlayer(discordId);
 
-		if(players.Count == 0) await RespondAsync("You do not exist",ephemeral: true);
+        if (players.Count == 0) await RespondAsync("You do not exist",ephemeral: true);
 
 		// rare case where there is multiple results
 		foreach(PlayerObject player in players)
@@ -66,18 +65,32 @@ public class PlayerModule : ModuleBase
 			.WithTitle(player.player.characterName)
 			.WithFooter(player.player.playerName);
 
-		playerDisplay.AddField("Stats:", "s");
+		//playerDisplay.AddField("Stats:", "s");
+		playerDisplay.AddField("Race:", player.race.name);
 
-		// nav buttons
-		// Page switching logic is inside InteractionHandler......yes I know.
-		// custom id is used to determine the logic for what is interacted with. We are using shop_page_#, for a button and once pressed will show that shop page
-		/*MessageComponent component = new ComponentBuilder()
+		if (player.classes.Count > 0)
+		{
+			String sClasses = "";
+			for (int i = 0; i < player.classes.Count; i++)
+			{
+				sClasses += $"{i+1}: {player.classes[i].name} ";
+
+				//playerDisplay.AddField(" ", $"{i}: {player.classes[i].name}", true);
+			}
+			playerDisplay.AddField("Classes:", sClasses);
+		}
+        //playerDisplay.AddField("Class:", );
+
+        // nav buttons
+        // Page switching logic is inside InteractionHandler......yes I know.
+        // custom id is used to determine the logic for what is interacted with. We are using shop_page_#, for a button and once pressed will show that shop page
+        /*MessageComponent component = new ComponentBuilder()
 			.WithButton("Inventory", customId: $"shop_page_", disabled: player.inventory.Count == 0)
 			.WithButton("Other I forgot", customId: $"shop_page_", disabled: pageIndex == totalPages - 1)
 			.Build();*/
 
 
-		RespondAsync(embed:playerDisplay.Build(), ephemeral: true);
+        RespondAsync(embed:playerDisplay.Build(), ephemeral: true);
 
 	}
 
