@@ -4,6 +4,8 @@
 # Our ignore
 Hackathon/appsettings.json
 Hackathon/.vs/
+Hackathon/bin/
+Hackathon/obj/
 
 # User-specific files
 *.suo
