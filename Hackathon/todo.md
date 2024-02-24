@@ -2,6 +2,7 @@
 
 - use embeds whenever possible
 - make private info ehpemeral (only shows to command sender)
+- Permissions are command group based, so admin commands need to be in seperate group
 
 ## Overall
 1. toString the main objects, for outputting to discord

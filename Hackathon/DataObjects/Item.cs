@@ -18,4 +18,6 @@ public class Item
 	public string Lore { get; set; }
 	public string Weight { get; set; }//optional
 	public string[] Tags { get; set; }// optional
+
+	public string imgUrl { get; set; }//optional
 }
