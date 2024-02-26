@@ -27,12 +27,16 @@ public class PlayerModule : ModuleBase
 		await DeferAsync();// stops error messages when there isnt an error
 
 		List<PlayerObject> players = await _database.GetAllPlayers();
-		foreach (PlayerObject player in players)
-		{
-			await Context.Channel.SendMessageAsync(player + "");
-		}
+		Console.WriteLine(players.Count);
 
-		await FollowupAsync("hmmmmmmmmmmmm");// stops the indefinate "* * * xolobot is thinking..."\
+		ShowPlayerEmbed(Context.Channel, players[0]);
+		/*foreach (PlayerObject player in players)
+		{
+			ShowPlayerEmbed(Context.Channel, player);
+			//await Context.Channel.SendMessageAsync(player + "");
+		}*/
+
+		//await FollowupAsync("hmmmmmmmmmmmm");// stops the indefinate "* * * xolobot is thinking..."\
 	}
 
 	[SlashCommand("me", "WHo aRE YOU!")]
@@ -65,22 +69,42 @@ public class PlayerModule : ModuleBase
 		EmbedBuilder playerDisplay = new EmbedBuilder()
 			.WithAuthor(Context.User)
 			.WithTitle(player.player.characterName)
-			.WithFooter(player.player.playerName);
+			.WithFooter($"Player: {player.player.playerName}");
 
-		//playerDisplay.AddField("Stats:", "s");
-		playerDisplay.AddField("Race:", player.race.name);
+		// First line: title & background
+        playerDisplay.AddField(player.background.name, player.background.description);
+
+		// Next line: Race, Class, & Subclass
+        playerDisplay.AddField("Race:", player.race.name, true);
 
 		if (player.classes.Count > 0)
 		{
 			String sClasses = "";
+			String sSubclasses = "";
 			for (int i = 0; i < player.classes.Count; i++)
 			{
-				sClasses += $"{i+1}: {player.classes[i].name} ";
+				if (i > 0) sClasses += "\r\n";
+                if (i > 0 && sSubclasses != "") sSubclasses += "\r\n";
 
-				//playerDisplay.AddField(" ", $"{i}: {player.classes[i].name}", true);
+                sClasses += $"{player.classes[i].name}";
+				sSubclasses += $"{player.classes[i].subtype}";
 			}
-			playerDisplay.AddField("Classes:", sClasses);
-		}
+			playerDisplay.AddField("Classes:", sClasses, true);
+            playerDisplay.AddField("Sub-Class:", sSubclasses, true);
+        }
+
+        // Next line: Stats
+        String sStr = player.ability_scores.str.ToString().PadLeft(3, ' ');
+        String sDex = player.ability_scores.dex.ToString().PadLeft(3, ' ');
+        String sCon = player.ability_scores.con.ToString().PadLeft(3, ' ');
+        String sInt = player.ability_scores.intel.ToString().PadLeft(3, ' ');
+        String sWis = player.ability_scores.wis.ToString().PadLeft(3, ' ');
+        String sCha = player.ability_scores.cha.ToString().PadLeft(3, ' ');
+
+        String sStats = String.Format("```STR:{0}\r\nDEX:{1}\r\nCON:{2}\r\nINT:{3}\r\nWIS:{4}\r\nCHA:{5}```",
+                        sStr, sDex, sCon, sInt, sWis, sCha);
+        playerDisplay.AddField("Stats:", sStats);
+
         //playerDisplay.AddField("Class:", );
 
         // nav buttons
