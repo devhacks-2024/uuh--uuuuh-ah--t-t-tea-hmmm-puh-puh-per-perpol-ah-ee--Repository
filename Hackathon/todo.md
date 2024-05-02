@@ -1,4 +1,9 @@
-﻿# TODO
+﻿Services: non singletons handling outside things.
+Modules: Command/features for input/output layer
+Managers: actual functionality called by modules.
+
+
+# TODO
 
 - use embeds whenever possible
 - make private info ehpemeral (only shows to command sender)
