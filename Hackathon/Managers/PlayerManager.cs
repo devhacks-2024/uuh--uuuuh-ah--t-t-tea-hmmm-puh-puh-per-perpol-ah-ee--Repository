@@ -98,9 +98,19 @@ public class PlayerManager
 		EmbedBuilder window = new EmbedBuilder()
 			.WithTitle($"{player.player.characterName}'s Inventory");
 
-		foreach(Item item in player.inventory)
+		// showAsList = false, we display large navi like shop
+		// Do some combinining items?
+
+		if(showAsList)
 		{
-			window.AddField($"{item.name}",$"{item.shortdescription}",true);
+			foreach(Item item in player.inventory)
+			{
+				window.AddField($"{item.name}",$"{item.shortdescription}",true);
+			}
+		}
+		else
+		{
+			// Show as large shoplike page
 		}
 
 		return window;

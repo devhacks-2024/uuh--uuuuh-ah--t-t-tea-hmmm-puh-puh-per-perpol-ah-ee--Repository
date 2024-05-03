@@ -3,6 +3,12 @@ Modules: Command/features for input/output layer
 Managers: actual functionality called by modules.
 
 
+ShopModule/Manager:
+- Difference between showShop and showItem.
+	- showShop is browsing entire list, with no option to buy and small description. 
+	- showItem does single item at a time nav list, with large description and buy option.
+		- showItem is a list, because it can support search terms, however, generally its for 1 item.
+
 # TODO
 
 - use embeds whenever possible
