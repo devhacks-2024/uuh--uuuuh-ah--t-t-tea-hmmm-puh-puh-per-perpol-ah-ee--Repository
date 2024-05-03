@@ -37,4 +37,25 @@ public class Item
 
 		return sb.ToString();
 	}
+
+	public bool ContainsFilter(String filter)
+	{
+		if(name.Contains(filter, StringComparison.OrdinalIgnoreCase)) return true;
+
+		foreach(string tag in tags)
+		{
+			if(tag.Contains(filter, StringComparison.OrdinalIgnoreCase)) return true;
+		}
+		return false;
+	}
+
+	public static List<Item> FilterItems(List<Item> list, string searchTerm)
+	{
+		if(string.IsNullOrEmpty(searchTerm))
+		{
+			return list;
+		}
+
+		return list.Where(item => item.ContainsFilter(searchTerm)).ToList();
+	}
 }

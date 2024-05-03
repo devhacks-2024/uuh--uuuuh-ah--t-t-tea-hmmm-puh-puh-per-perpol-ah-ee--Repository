@@ -1,8 +1,10 @@
-﻿using Discord;
+﻿using Azure;
+using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
 using Hackathon.DataObjects;
 using Hackathon.DataObjects.PlayerAdditions;
+using Hackathon.Managers;
 using Hackathon.Managers.Shop;
 using Hackathon.Services;
 using Microsoft.Extensions.Logging;
@@ -11,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -66,14 +69,63 @@ public class PlayerModule : ModuleBase
 	}
 
 	[SlashCommand("inventory", "Shows your inventory")]
-	public async Task ShowInventoryCommand(bool showAsList = true)
+	public async Task ShowInventoryCommand(
+		[Summary("Filter", "Only display items using this filter (name and tags.)")]
+		string filter = "",
+		[Summary("list", "show all items as a single list.")]
+		bool showAsList = false)
 	{
+		await DeferAsync();// stops error messages when there isnt an error
+
+		if(filter == null)
+		{
+			await RespondAsync("Invalid search term!", ephemeral: true);
+			return;
+		}
+		else if(filter.Contains("_"))
+		{
+			await RespondAsync("Cannot have '_' in search term!", ephemeral: true);
+			return;
+		}
+
 		ulong discordId = Context.User.Id;
 
 		var user =  await _database.GetPlayer(discordId.ToString());
 
-		var window = PlayerManager.Instance.CreatePlayerInventroyPage(user.First(), showAsList);
-		await RespondAsync(embed: window.Build());
+		List<DataObjects.Item> items;
+		if(string.IsNullOrEmpty(filter))
+		{
+			items = user.First().inventory;
+			filter = "all items";
+		}
+		else
+		{
+			// filter containing name, or COMPLETE tag
+			items = Item.FilterItems(user.First().inventory, filter);
+		}
+
+		if(items != null && items.Count > 0)
+		{
+			if(showAsList)
+			{
+				// TODO: add filter
+				EmbedBuilder page = PlayerManager.Instance.ListPlayerInventory(user.First());
+				await RespondAsync(embed: page.Build(), ephemeral: true); // TODO: DETERMINE if should use EPHEMERAL 
+			}
+			else
+			{
+				await PlayerManager.Instance.ShowInventoryPage(Context.Channel,0,items, filter, discordId.ToString());
+			}
+		}
+		else
+		{
+			// empty inventory
+			await FollowupAsync("There is nothing in your inventory like that!");
+			return;
+		}
+
+
+		await FollowupAsync("hmmmmmmmmmmmm");// stops the indefinate "* * * xolobot is thinking..."
 	}
 
 

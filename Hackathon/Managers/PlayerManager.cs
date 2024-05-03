@@ -93,7 +93,7 @@ public class PlayerManager
 
 	}
 
-	public EmbedBuilder CreatePlayerInventroyPage(PlayerObject player, bool showAsList)
+	public EmbedBuilder ListPlayerInventory(PlayerObject player)
 	{
 		EmbedBuilder window = new EmbedBuilder()
 			.WithTitle($"{player.player.characterName}'s Inventory");
@@ -101,18 +101,40 @@ public class PlayerManager
 		// showAsList = false, we display large navi like shop
 		// Do some combinining items?
 
-		if(showAsList)
+
+		foreach(Item item in player.inventory)
 		{
-			foreach(Item item in player.inventory)
-			{
-				window.AddField($"{item.name}",$"{item.shortdescription}",true);
-			}
-		}
-		else
-		{
-			// Show as large shoplike page
+			window.AddField($"{item.name}",$"{item.shortdescription}",true);
 		}
 
 		return window;
 	}
+
+	public async Task ShowInventoryPage(ISocketMessageChannel location, int pageIndex, List<Item> items, string filter ,string discordIDInventoryToShow, IUserMessage existingMessage = null)
+	{
+		int totalPages = items.Count;
+		Item item = items[pageIndex];
+
+		// cannot use userInteractor/IUser, as that is the person who clicked the button. This would change the inventory being displayed.
+		// Must pass constant name with discordIDInventoryToShow.
+		(EmbedBuilder, ComponentBuilder) builders = ItemManager.Instance.CreateItemDisplayList("INVENTORY", discordIDInventoryToShow + "_" + filter, pageIndex, items);
+
+		// Possible sell button??!?!?!?!
+
+
+		// Edit existing menu, so it doesnt spam.
+		if(existingMessage != null)
+		{
+			await existingMessage.ModifyAsync(msg => {
+				msg.Embed = builders.Item1.Build();
+				msg.Components = builders.Item2.Build();
+			});
+		}
+		else
+		{
+			await location.SendMessageAsync(embed: builders.Item1.Build(), components: builders.Item2.Build());
+		}
+	}
+
+
 }

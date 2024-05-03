@@ -36,7 +36,8 @@ public class ShopManager
 
 	// Similear to show shop, however just for search term items and shows more data `shop_page_<searchterm>_#`
 	// ONLY SHOWS 1 Item per page
-	public async Task ShowItemPage(ISocketMessageChannel location, String searchTerm, int pageIndex, List<Item> items, IUser userInteractor, IUserMessage existingMessage = null)
+	// List is already filtered and valid, search-term is just for display purposes.
+	public async Task ShowItemPageOLD(ISocketMessageChannel location, String searchTerm, int pageIndex, List<Item> items, IUser userInteractor, IUserMessage existingMessage = null)
 	{
 		if(searchTerm.Contains("_"))
 		{
@@ -47,13 +48,16 @@ public class ShopManager
 		int totalPages = items.Count;
 		Item item = items[pageIndex];
 
-		EmbedBuilder window = new EmbedBuilder()
+		/*EmbedBuilder window = new EmbedBuilder()
 			.WithTitle($"**{item.name}**\n**{item.cost}** ***gp***")
 			.WithDescription($"> *{item.TagsToString()}*")
 			.WithFooter(footer => footer.Text = $"{items.Count} results for: '{searchTerm}'\nPage {pageIndex + 1} of {totalPages}")
 			.WithImageUrl(item.imgUrl ?? "");// This makes it only possible for 1 item at a time
+		*/
+		EmbedBuilder window = ItemManager.Instance.CreateItemDisplay(item);
+		window.WithFooter(footer => footer.Text = $"{items.Count} results for: '{searchTerm}'\nPage {pageIndex + 1} of {totalPages}");
 
-		window.AddField($"**Description**:", $"{item.longdescription}");
+		//window.AddField($"**Description**:", $"{item.longdescription}");
 
 		// nav buttons
 		// Page switching logic is inside InteractionHandler......yes I know.
@@ -79,6 +83,33 @@ public class ShopManager
 		else
 		{
 			await location.SendMessageAsync(embed: window.Build(), components: component.Build());
+		}
+	}
+
+	public async Task ShowItemPage(ISocketMessageChannel location, String searchTerm, int pageIndex, List<Item> items, IUser userInteractor, IUserMessage existingMessage = null)
+	{
+		int totalPages = items.Count;
+		Item item = items[pageIndex];
+
+		(EmbedBuilder, ComponentBuilder) builders = ItemManager.Instance.CreateItemDisplayList("SHOP",searchTerm,pageIndex,items);
+
+		// Shop buy. This doesnt care about anything but whoever CREATED the page and the current item on display.
+		// Shops must be ephemral??? unless we can buy for whoever clicked...however....
+		// TODO: remove/move this to shop this
+		builders.Item2.WithButton("***BUY NOW!***", customId: $"shop_buy_{item.name}_{userInteractor.Id.ToString()}");
+
+
+		// Edit existing shop menu, so it doesnt spam.
+		if(existingMessage != null)
+		{
+			await existingMessage.ModifyAsync(msg => {
+				msg.Embed = builders.Item1.Build();
+				msg.Components = builders.Item2.Build();
+			});
+		}
+		else
+		{
+			await location.SendMessageAsync(embed: builders.Item1.Build(), components: builders.Item2.Build());
 		}
 	}
 

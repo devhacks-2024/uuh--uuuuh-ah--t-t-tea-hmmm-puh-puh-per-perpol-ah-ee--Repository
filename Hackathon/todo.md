@@ -9,6 +9,13 @@ ShopModule/Manager:
 	- showItem does single item at a time nav list, with large description and buy option.
 		- showItem is a list, because it can support search terms, however, generally its for 1 item.
 
+Reserved words:
+- INVENTORY
+- 'all items'
+
+
+playerviewing inventory MUST be emphreal?
+
 # TODO
 
 - use embeds whenever possible

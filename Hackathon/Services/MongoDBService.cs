@@ -3,11 +3,13 @@ using Hackathon.DataObjects.PlayerAdditions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Hackathon.Services;
@@ -73,7 +75,7 @@ public class MongoDBService
 		
 		List<PlayerObject> players = await playerCollection.Find(filter).ToListAsync();
 
-		if(players.Count > 1) Console.WriteLine("huh, it seems discord id:'" + discordId + "' has " + players.Count + "players assosiated with them.");
+		if(players.Count > 1) _logger.LogInformation("huh, it seems discord id:'" + discordId + "' has " + players.Count + "players assosiated with them.");
 
 		return players;
 	}

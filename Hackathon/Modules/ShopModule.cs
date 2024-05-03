@@ -8,6 +8,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using System.Text;
 using Discord;
+using MongoDB.Bson.Serialization.Serializers;
 
 namespace Hackathon.Modules;
 
@@ -25,35 +26,54 @@ public class ShopModule : ModuleBase
 		await FollowupAsync("hmmmmmmmmmmmm");// stops the indefinate "* * * xolobot is thinking..."
 	}
 
-	[SlashCommand("view", "View specifc items")]
-	public async Task ItemInfoCommand(
-		[Summary("query", "items with names and tags containing")]
-		string searchTerm)
-	{
-		await DeferAsync();// stops error messages when there isnt an error
-		OpenItemPage(Context.Channel, searchTerm);
-		await FollowupAsync("hmmmmmmmmmmmm");// stops the indefinate "* * * xolobot is thinking..."
-	}
-
 	private async void OpenShop(ISocketMessageChannel location)
 	{
 		var items = await _database.GetShopItems();
 		await ShopManager.Instance.ShowShopPage(location, 0, items);
 	}
 
-	private async void OpenItemPage(ISocketMessageChannel location, String searchTerm)
+	[SlashCommand("view", "View specifc items")]
+	public async Task ItemInfoCommand(
+		[Summary("query", "items with names and tags containing")]
+		string searchTerm = "")
 	{
-		var items = await _database.GetShopItems(searchTerm);
-		await ShopManager.Instance.ShowItemPage(location, searchTerm, 0, items, Context.User);
+		await DeferAsync();// stops error messages when there isnt an error
+		if(searchTerm == null)
+		{
+			await RespondAsync("Invalid search term!", ephemeral: true);
+			return;
+		}
+		else if(searchTerm.Contains("_"))
+		{
+			await RespondAsync("Cannot have '_' in search term!", ephemeral: true);
+			return;
+		}
+
+
+		// This is a really bad function name. This string is guerenteed to NEVER be null, however...it may be empty
+		// When empty, search ALL
+		// Debatebly when searchTerm = "", it will already get everything, however, it may be better to be expld here.
+		List<DataObjects.Item> items;
+		if(string.IsNullOrEmpty(searchTerm))
+		{
+			items = await _database.GetShopItems();
+			searchTerm = "all items";
+		}
+		else
+		{
+			items = await _database.GetShopItems(searchTerm);
+		}
+
+		if(items != null && items.Count > 0)
+		{
+			await ShopManager.Instance.ShowItemPage(Context.Channel, searchTerm, 0, items, Context.User);
+		}
+		else
+		{
+			await FollowupAsync("I dont have any items like that!");
+			return;
+		}
+
+		await FollowupAsync("hmmmmmmmmmmmm");// stops the indefinate "* * * xolobot is thinking..."
 	}
-
-	// Buy item
-	// Buy is on item view page
-
-
-	// etc.
-
-
-
-
 }

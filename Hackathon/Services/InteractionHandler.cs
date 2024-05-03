@@ -1,8 +1,10 @@
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
+using Hackathon.DataObjects;
 using Hackathon.Managers.Shop;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System.Reflection;
 
 namespace Hackathon.Services;
@@ -75,13 +77,13 @@ public class InteractionHandler
 
 	private async Task ButtonHandler(SocketMessageComponent component)
 	{
-        Console.Out.WriteLine(component.User.GlobalName + ": "+component.Data.CustomId);
+        _logger.LogInformation(component.User.GlobalName + ": "+component.Data.CustomId);
         // Shop nav
         if (component.Data.CustomId.Contains("shop_page_"))
 		{
 			await HandleShopNavigation(component);
 		}
-		else if(component.Data.CustomId.Contains("item_page_"))
+		else if(component.Data.CustomId.Contains("item-nav"))
 		{
 			await HandleItemNavigation(component);
 		}
@@ -124,18 +126,44 @@ public class InteractionHandler
 
 	private async Task HandleItemNavigation(SocketMessageComponent component)
 	{
-		// 2 is search term
-		// 3 is page
+		// 0 item-nav
+		// 1 page#
+		// 2 is context (ex: shop, inventory)
+		// 3 is filter
+		// 4+ is optional params, however, I dont know how to actuall give these paramaters
 		string[] parts = component.Data.CustomId.Split('_');
 		if(parts.Length < 4) return;
-		if(!int.TryParse(parts[3], out int page)) return;
+		if(!int.TryParse(parts[1], out int page)) return;
 
-		String searchTerm = parts[2];
+		String context = parts[2];
+		String filter = parts[3];
 
-		var items = await _database.GetShopItems();
+		List<DataObjects.Item> items;
 
-		// modify shop menu with new page
-		await ShopManager.Instance.ShowItemPage(component.Channel, searchTerm, page, items, component.User, (IUserMessage)component.Message);
+
+		if(context == "INVENTORY")
+		{
+			// filter is player's discord ID
+			// Currently cannot filter inventory search
+			string itemFilter = parts[4];
+
+			items = (await _database.GetPlayer(filter)).First().inventory;// Ignores if discordID have multiple characters
+
+			if(itemFilter != "all items")
+			{
+				items = Item.FilterItems(items, itemFilter);
+			}
+
+			await PlayerManager.Instance.ShowInventoryPage(component.Channel, page, items, itemFilter, filter, (IUserMessage)component.Message);
+		}
+		else if(context == "SHOP")
+		{
+			items = filter == "all items" ? await _database.GetShopItems() : await _database.GetShopItems(filter);
+
+			// modify shop menu with new page
+			await ShopManager.Instance.ShowItemPage(component.Channel, filter, page, items, component.User, (IUserMessage)component.Message);
+		}
+
 
 		await component.DeferAsync();// stops crashing?
 	}
