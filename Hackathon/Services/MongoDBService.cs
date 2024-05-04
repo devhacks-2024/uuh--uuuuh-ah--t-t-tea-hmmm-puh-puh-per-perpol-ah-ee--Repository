@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -115,4 +116,64 @@ public class MongoDBService
 
 		return 1;
 	}
+
+	public async Task AddCharacter(PlayerObject character)
+	{
+		try
+		{
+			var collection = _database.GetCollection<PlayerObject>("Players");
+
+			// Check if the character already exists based on DiscordId
+			var existingPlayer = await collection.Find(p => p.player.discordId == character.player.discordId).FirstOrDefaultAsync();
+			if(existingPlayer != null)
+			{
+				_logger.LogInformation($"Character already exists for Discord ID: {character.player.discordId}. No new character added.");
+				return; // Exit the method to avoid adding a duplicate
+			}
+
+			await collection.InsertOneAsync(character);
+			_logger.LogInformation($"Added new character. <@{character.player.discordId}> as {character.player.characterName}");
+		}
+		catch(Exception ex)
+		{
+			_logger.LogError($"Error adding character: {ex.Message}");
+			throw;
+		}
+	}
+
+
+	public async Task AddCharacter(List<PlayerObject> characters)
+	{
+		try
+		{
+			var collection = _database.GetCollection<PlayerObject>("Players");
+
+			// Find existing characters to prevent duplicates
+			var discordIds = characters.Select(c => c.player.discordId).ToList();
+			var existingPlayers = await collection.Find(p => discordIds.Contains(p.player.discordId)).ToListAsync();
+			var existingPlayerIds = new HashSet<string>(existingPlayers.Select(p => p.player.discordId));
+
+			// Filter out characters that already exist
+			var newCharacters = characters.Where(c => !existingPlayerIds.Contains(c.player.discordId)).ToList();
+			if(!newCharacters.Any())
+			{
+				_logger.LogInformation("No new characters to add. All provided characters already exist in the database.");
+				return;
+			}
+
+			await collection.InsertManyAsync(newCharacters);
+			_logger.LogInformation($"Added {newCharacters.Count} new characters to the database.");
+		}
+		catch(MongoBulkWriteException ex)
+		{
+			_logger.LogError($"Bulk insert error: {ex.Message}");
+			throw;
+		}
+		catch(Exception ex)
+		{
+			_logger.LogError($"Error adding characters: {ex.Message}");
+			throw;
+		}
+	}
+
 }

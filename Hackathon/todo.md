@@ -26,15 +26,26 @@ playerviewing inventory MUST be emphreal?
 1. toString the main objects, for outputting to discord
 2. maybe also custom tostring with specifc controlled info to feed ai
 
+## Admin
+1. add and remove things.
+	1. No remove. add command for json, so I can add without needing to open mongoCompass, however, this is a common case so no point on implementing these features.
+	1. However, being able to edit SPECIFIC player info will be benificial (name, items, background, etc).
+	1. The point being, adding functionality to add/remove json blocks is pointless.
+
 ## SHOP
-1. buy
+1. ~~buy~~
 2. sell
 3. add more stuff
+1. Modify price and buy and sell
 
 ## PLAYER
-1. proper display
+1. Advance display
+	1. ~~Inventory~~
+	1. lore
+	1. stats
 2. edit player
 3. add player?!?!
 
 ## AI
 1. Everything
+1. conversations
