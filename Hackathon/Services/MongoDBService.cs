@@ -1,5 +1,7 @@
-﻿using Hackathon.DataObjects;
+﻿using Discord;
+using Hackathon.DataObjects;
 using Hackathon.DataObjects.PlayerAdditions;
+using Hackathon.Managers.Shop;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
@@ -104,6 +106,9 @@ public class MongoDBService
 		}
 
 		// Update gold and inv
+		float newItemValue = item.cost * ShopManager.Instance.GetBuyDecMultiplier();
+		item.cost = (int)newItemValue;
+
 		var updatePlayer = Builders<PlayerObject>.Update
 			.Push("inventory", item)
 			.Set(p => p.treasure.gold, player.treasure.gold - item.cost);
@@ -115,6 +120,52 @@ public class MongoDBService
 		await itemCollection.DeleteOneAsync(deleteFilter);
 
 		return 1;
+	}
+
+	public async Task<int> SellItem(string discordId, string itemName)
+	{
+		var playerCollection = _database.GetCollection<PlayerObject>("Players");
+		var filter = Builders<PlayerObject>.Filter.Eq("player.discordId", discordId);
+		var player = await playerCollection.Find(filter).FirstOrDefaultAsync(); // This breaks if there are multiple characters assosiated with a player.
+		if(player == null) return -1; //player not found.
+
+		var item = player.inventory.FirstOrDefault(i => i.name == itemName);
+		if(item == null) return 0;// Item not in inventory
+
+		// Update gold and inv. Remove item and add gold
+		var updatePlayer = Builders<PlayerObject>.Update
+			.Set(p => p.treasure.gold, player.treasure.gold + item.cost)
+			.PullFilter(p => p.inventory, Builders<Item>.Filter.Eq("name", itemName));
+
+		await playerCollection.UpdateOneAsync(filter, updatePlayer);
+
+		// update shop
+
+		// Increase item value (shopkeeper sells at higher price)
+		float newItemValue = item.cost * ShopManager.Instance.GetSellIncMultiplier();
+		item.cost = (int)newItemValue;
+
+		var itemCollection = _database.GetCollection<Item>("ShopItems");
+		await itemCollection.InsertOneAsync(item);
+
+		return 1;
+	}
+
+	public async Task<PlayerObject> AddTreasure(IUser target, Treasure amount)
+	{
+		var playerCollection = _database.GetCollection<PlayerObject>("Players");
+		var filter = Builders<PlayerObject>.Filter.Eq("player.discordId", target.Id);
+		var player = await playerCollection.Find(filter).FirstOrDefaultAsync(); // This breaks if there are multiple characters assosiated with a player.
+		if(player == null) return null; //player not found.	
+
+		player.treasure += amount;
+
+		var updatePlayer = Builders<PlayerObject>.Update
+			.Set(p => p.treasure, player.treasure);
+
+		await playerCollection.UpdateOneAsync(filter, updatePlayer);
+
+		return player;
 	}
 
 	public async Task AddCharacter(PlayerObject character)

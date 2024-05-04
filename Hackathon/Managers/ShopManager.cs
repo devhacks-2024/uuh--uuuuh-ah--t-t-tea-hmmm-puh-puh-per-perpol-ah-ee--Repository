@@ -33,6 +33,25 @@ public class ShopManager
 
 	private const int ITEMS_PER_SHOP_PAGE = 3;
 	private const string SHOP_NAME = "**Magic store**";
+	private readonly (float, float) SELL_PRICE_INC = (1.1f, 1.4f);
+	private readonly (float, float) BUY_PRICE_DEC = (0.75f, 0.9f);
+	private readonly Random random = new Random();
+
+
+	// possible expansion for controlling how this function works (hagle)
+	public float GetSellIncMultiplier()
+	{
+		// scale * range + base(min)
+		double value = random.NextDouble() * (SELL_PRICE_INC.Item2 - SELL_PRICE_INC.Item1) + SELL_PRICE_INC.Item1;
+		return (float)Math.Round(value, 3);
+	}
+
+	public float GetBuyDecMultiplier()
+	{
+		// scale * range + base(min)
+		double value = random.NextDouble() * (BUY_PRICE_DEC.Item2 - BUY_PRICE_DEC.Item1) + BUY_PRICE_DEC.Item1;
+		return (float)Math.Round(value, 3);
+	}
 
 	// Similear to show shop, however just for search term items and shows more data `shop_page_<searchterm>_#`
 	// ONLY SHOWS 1 Item per page
@@ -96,7 +115,7 @@ public class ShopManager
 		// Shop buy. This doesnt care about anything but whoever CREATED the page and the current item on display.
 		// Shops must be ephemral??? unless we can buy for whoever clicked...however....
 		// TODO: remove/move this to shop this
-		builders.Item2.WithButton("***BUY NOW!***", customId: $"shop_buy_{item.name}_{userInteractor.Id.ToString()}");
+		builders.Item2.AddRow(new ActionRowBuilder().WithButton("***BUY NOW!***", customId: $"shop_buy_{item.name}_{userInteractor.Id.ToString()}"));
 
 
 		// Edit existing shop menu, so it doesnt spam.
@@ -165,6 +184,26 @@ public class ShopManager
 		else if(result == 1)
 		{
 			await caller.RespondAsync($"<@{caller.User.Id}>, is now the owner of: {itemName}");
+		}
+	}
+
+	public async void SellItem(SocketMessageComponent caller, string playerId, string itemName, MongoDBService databaseReference)
+	{
+		//TODO: MAKE SURE CALLER ID IS PLAYER ID. this disallows other people from selling your items.
+		int result = await databaseReference.SellItem(playerId, itemName);
+
+		/*if(result == -1)
+		{
+		// ERROR WITH DATABASE
+			//await caller.RespondAsync("item or player is null in database", ephemeral: true);
+		}*/
+		if(result == 0)// Item not in inventory
+		{
+			await caller.RespondAsync("The item is not in your inventory.", ephemeral: true);
+		}
+		else if(result == 1)
+		{
+			await caller.RespondAsync($"You have sold your item");
 		}
 	}
 }

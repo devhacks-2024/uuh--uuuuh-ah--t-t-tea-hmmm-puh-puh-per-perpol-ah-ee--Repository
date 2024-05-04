@@ -63,11 +63,27 @@ public class AdminModule : ModuleBase
 				else
 				{
 					//poopoo
+					await RespondAsync("Invalid file.", ephemeral: true);
 				}
 			}
 
 		}
 
+
+		[SlashCommand("treasure", "Add gold,silver,copper to player")]
+		public async Task AddPlayerTreasure([Summary("User", "target to give the treasure")] IUser target, [ComplexParameter]Treasure amount)
+		{
+			PlayerObject player = await _database.AddTreasure(target, amount);
+
+			if(player != null)
+			{
+				await RespondAsync($"Added ({amount}) to {player.player.characterName}\nThere total is now: {player.treasure}");
+			}
+			else
+			{
+				await RespondAsync($"Invalid target");
+			}
+		}
 	}
 
 }

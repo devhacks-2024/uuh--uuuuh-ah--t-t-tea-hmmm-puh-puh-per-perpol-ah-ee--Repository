@@ -34,9 +34,11 @@ playerviewing inventory MUST be emphreal?
 
 ## SHOP
 1. ~~buy~~
-2. sell
+2. ~~sell~~
 3. add more stuff
-1. Modify price and buy and sell
+1. ~~Modify price and buy and sell~~
+1. Use itemId instead of names. USE ITEM ID, using name does EVERYTHING sharing the name
+1. Fix shop nav after selling item
 
 ## PLAYER
 1. Advance display

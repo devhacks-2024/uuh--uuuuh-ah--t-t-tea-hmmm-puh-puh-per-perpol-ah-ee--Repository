@@ -91,6 +91,29 @@ public class InteractionHandler
 		{
 			await HandleBuyItem(component);
 		}
+		else if(component.Data.CustomId.Contains("shop-sell_"))
+		{
+			await HandleSellItem(component);
+		}
+	}
+	private async Task HandleSellItem(SocketMessageComponent component)
+	{
+		// 0: shop-sell
+		// 1: player discord id
+		// 2: item name
+		string[] parts = component.Data.CustomId.Split('_');
+		if(parts.Length < 3) return;
+		//if(!int.TryParse(parts[3], out int page)) return;
+		// 2 is item name
+		string playerId = parts[1];
+		string itemName = parts[2];
+		// 3 is discord id
+
+		//await component.RespondAsync($@"<@{component.User.Id}> attempted to buy item: {playerId}");
+
+		ShopManager.Instance.SellItem(component, playerId, itemName, _database);
+
+		//await component.DeferAsync();// stops crashing?
 	}
 
 	private async Task HandleBuyItem(SocketMessageComponent component)
