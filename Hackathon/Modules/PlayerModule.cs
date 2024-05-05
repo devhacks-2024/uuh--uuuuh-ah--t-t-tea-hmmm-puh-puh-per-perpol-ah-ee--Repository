@@ -127,9 +127,4 @@ public class PlayerModule : ModuleBase
 
 		await FollowupAsync("hmmmmmmmmmmmm");// stops the indefinate "* * * xolobot is thinking..."
 	}
-
-
-	// player inv
-
-	// modify player, needing permissions?
 }

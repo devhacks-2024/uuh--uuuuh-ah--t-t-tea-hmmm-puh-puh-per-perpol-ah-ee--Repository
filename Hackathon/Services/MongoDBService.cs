@@ -84,10 +84,10 @@ public class MongoDBService
 	}
 
 
-	public async Task<int> BuyItem(string discordId, string itemName)
+	public async Task<int> BuyItem(string discordId, string itemId)
 	{
 		var itemCollection = _database.GetCollection<Item>("ShopItems");
-		var item = await itemCollection.Find(i => i.name == itemName).FirstOrDefaultAsync();
+		var item = await itemCollection.Find(i => i._id == ObjectId.Parse(itemId)).FirstOrDefaultAsync();
 		
 		var playerCollection = _database.GetCollection<PlayerObject>("Players");
 		var filter = Builders<PlayerObject>.Filter.Eq("player.discordId", discordId);
@@ -116,26 +116,26 @@ public class MongoDBService
 		await playerCollection.UpdateOneAsync(filter, updatePlayer);
 
 		// Update shop
-		var deleteFilter = Builders<Item>.Filter.Eq("name", itemName);
+		var deleteFilter = Builders<Item>.Filter.Eq("_id", ObjectId.Parse(itemId));
 		await itemCollection.DeleteOneAsync(deleteFilter);
 
 		return 1;
 	}
 
-	public async Task<int> SellItem(string discordId, string itemName)
+	public async Task<int> SellItem(string discordId, string itemId)
 	{
 		var playerCollection = _database.GetCollection<PlayerObject>("Players");
 		var filter = Builders<PlayerObject>.Filter.Eq("player.discordId", discordId);
 		var player = await playerCollection.Find(filter).FirstOrDefaultAsync(); // This breaks if there are multiple characters assosiated with a player.
 		if(player == null) return -1; //player not found.
 
-		var item = player.inventory.FirstOrDefault(i => i.name == itemName);
+		var item = player.inventory.FirstOrDefault(i => i._id == ObjectId.Parse(itemId));
 		if(item == null) return 0;// Item not in inventory
 
 		// Update gold and inv. Remove item and add gold
 		var updatePlayer = Builders<PlayerObject>.Update
 			.Set(p => p.treasure.gold, player.treasure.gold + item.cost)
-			.PullFilter(p => p.inventory, Builders<Item>.Filter.Eq("name", itemName));
+			.PullFilter(p => p.inventory, Builders<Item>.Filter.Eq("_id", ObjectId.Parse(itemId)));
 
 		await playerCollection.UpdateOneAsync(filter, updatePlayer);
 

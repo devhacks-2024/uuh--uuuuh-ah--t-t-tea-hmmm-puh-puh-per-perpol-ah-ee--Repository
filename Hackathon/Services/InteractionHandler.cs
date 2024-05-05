@@ -106,12 +106,12 @@ public class InteractionHandler
 		//if(!int.TryParse(parts[3], out int page)) return;
 		// 2 is item name
 		string playerId = parts[1];
-		string itemName = parts[2];
+		string itemId = parts[2];
 		// 3 is discord id
 
 		//await component.RespondAsync($@"<@{component.User.Id}> attempted to buy item: {playerId}");
 
-		ShopManager.Instance.SellItem(component, playerId, itemName, _database);
+		ShopManager.Instance.SellItem(component, playerId, itemId, _database);
 
 		//await component.DeferAsync();// stops crashing?
 	}
@@ -122,12 +122,12 @@ public class InteractionHandler
 		if(parts.Length < 4) return;
 		//if(!int.TryParse(parts[3], out int page)) return;
 		// 2 is item name
-		string itemName = parts[2];
+		string itemId = parts[2];
 		// 3 is discord id
 
 		//await component.RespondAsync($@"<@{component.User.Id}> attempted to buy item: {itemName}");
 
-		ShopManager.Instance.BuyItem(component, itemName, _database);
+		ShopManager.Instance.BuyItem(component, itemId, _database);
 
 		//await component.DeferAsync();// stops crashing?
 	}

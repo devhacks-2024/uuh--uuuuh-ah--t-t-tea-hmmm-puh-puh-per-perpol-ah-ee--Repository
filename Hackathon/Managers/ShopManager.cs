@@ -56,55 +56,6 @@ public class ShopManager
 	// Similear to show shop, however just for search term items and shows more data `shop_page_<searchterm>_#`
 	// ONLY SHOWS 1 Item per page
 	// List is already filtered and valid, search-term is just for display purposes.
-	public async Task ShowItemPageOLD(ISocketMessageChannel location, String searchTerm, int pageIndex, List<Item> items, IUser userInteractor, IUserMessage existingMessage = null)
-	{
-		if(searchTerm.Contains("_"))
-		{
-			await location.SendMessageAsync("Cannot have '_' in search term!");
-			return;
-		}
-
-		int totalPages = items.Count;
-		Item item = items[pageIndex];
-
-		/*EmbedBuilder window = new EmbedBuilder()
-			.WithTitle($"**{item.name}**\n**{item.cost}** ***gp***")
-			.WithDescription($"> *{item.TagsToString()}*")
-			.WithFooter(footer => footer.Text = $"{items.Count} results for: '{searchTerm}'\nPage {pageIndex + 1} of {totalPages}")
-			.WithImageUrl(item.imgUrl ?? "");// This makes it only possible for 1 item at a time
-		*/
-		EmbedBuilder window = ItemManager.Instance.CreateItemDisplay(item);
-		window.WithFooter(footer => footer.Text = $"{items.Count} results for: '{searchTerm}'\nPage {pageIndex + 1} of {totalPages}");
-
-		//window.AddField($"**Description**:", $"{item.longdescription}");
-
-		// nav buttons
-		// Page switching logic is inside InteractionHandler......yes I know.
-		var component = new ComponentBuilder()
-			.WithButton("***BUY NOW!***", customId: $"shop_buy_{item.name}_{userInteractor.Id.ToString()}");
-
-		if(items.Count > 1)
-		{
-			component
-				.WithButton(emote: new Emoji("\u2B05"), customId: $"item_page_{searchTerm}_{pageIndex - 1}", disabled: pageIndex == 0)
-			.WithButton(emote: new Emoji("\u27A1"), customId: $"item_page_{searchTerm}_{pageIndex + 1}", disabled: pageIndex == totalPages - 1);
-		}
-
-
-		// Edit existing shop menu, so it doesnt spam.
-		if(existingMessage != null)
-		{
-			await existingMessage.ModifyAsync(msg => {
-				msg.Embed = window.Build();
-				msg.Components = component.Build();
-			});
-		}
-		else
-		{
-			await location.SendMessageAsync(embed: window.Build(), components: component.Build());
-		}
-	}
-
 	public async Task ShowItemPage(ISocketMessageChannel location, String searchTerm, int pageIndex, List<Item> items, IUser userInteractor, IUserMessage existingMessage = null)
 	{
 		int totalPages = items.Count;
@@ -115,7 +66,7 @@ public class ShopManager
 		// Shop buy. This doesnt care about anything but whoever CREATED the page and the current item on display.
 		// Shops must be ephemral??? unless we can buy for whoever clicked...however....
 		// TODO: remove/move this to shop this
-		builders.Item2.AddRow(new ActionRowBuilder().WithButton("***BUY NOW!***", customId: $"shop_buy_{item.name}_{userInteractor.Id.ToString()}"));
+		builders.Item2.AddRow(new ActionRowBuilder().WithButton("***BUY NOW!***", customId: $"shop_buy_{item._id}_{userInteractor.Id.ToString()}"));
 
 
 		// Edit existing shop menu, so it doesnt spam.
@@ -169,9 +120,9 @@ public class ShopManager
 		}
 	}
 
-	public async void BuyItem(SocketMessageComponent caller, string itemName, MongoDBService databaseReference)
+	public async void BuyItem(SocketMessageComponent caller, string itemId, MongoDBService databaseReference)
 	{
-		int result = await databaseReference.BuyItem(caller.User.Id.ToString(), itemName);
+		int result = await databaseReference.BuyItem(caller.User.Id.ToString(), itemId);
 
 		if(result == -1)
 		{
@@ -183,14 +134,14 @@ public class ShopManager
 		}
 		else if(result == 1)
 		{
-			await caller.RespondAsync($"<@{caller.User.Id}>, is now the owner of: {itemName}");
+			await caller.RespondAsync($"<@{caller.User.Id}>, is now the owner of: {itemId}");
 		}
 	}
 
-	public async void SellItem(SocketMessageComponent caller, string playerId, string itemName, MongoDBService databaseReference)
+	public async void SellItem(SocketMessageComponent caller, string playerId, string itemId, MongoDBService databaseReference)
 	{
 		//TODO: MAKE SURE CALLER ID IS PLAYER ID. this disallows other people from selling your items.
-		int result = await databaseReference.SellItem(playerId, itemName);
+		int result = await databaseReference.SellItem(playerId, itemId);
 
 		/*if(result == -1)
 		{

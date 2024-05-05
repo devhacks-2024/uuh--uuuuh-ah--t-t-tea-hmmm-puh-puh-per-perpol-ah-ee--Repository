@@ -120,7 +120,7 @@ public class PlayerManager
 		(EmbedBuilder, ComponentBuilder) builders = ItemManager.Instance.CreateItemDisplayList("INVENTORY", discordIDInventoryToShow + "_" + filter, pageIndex, items);
 
 		// Possible sell button??!?!?!?!
-		builders.Item2.AddRow(new ActionRowBuilder().WithButton("Sell", $"shop-sell_{discordIDInventoryToShow}_{item.name}"));
+		builders.Item2.AddRow(new ActionRowBuilder().WithButton("Sell", $"shop-sell_{discordIDInventoryToShow}_{item._id}"));
 		//builders.Item2.AddRow(new ActionRowBuilder().WithButton("***BUY NOW!***", customId: $"shop_buy_{item.name}_{userInteractor.Id.ToString()}"));
 
 		// Edit existing menu, so it doesnt spam.
